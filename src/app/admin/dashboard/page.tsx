@@ -36,6 +36,7 @@ import {
 } from 'recharts';
 import { toast } from 'react-toastify';
 import { stat } from 'node:fs';
+import { totalmem } from 'node:os';
 
 interface StatCardProps {
   title: string;
@@ -107,14 +108,13 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         totalUsers: 0,
-        totalAdvertisers: 0,
-        activeAds: 0,
-        inactiveAds: 0,
-        downloads: 0,
-        tokens: 0,
-        referrals: 0,
-        redemption: 0,
-        redemptionSummary: [],
+        totalReads: 0,
+        totalSubscribers: 0,
+        totalSubscriptionAmount: 0,
+        totalCharacters: 0,
+        totalStoryArcs: 0,
+        totalComics: 0,
+        totalIssues: 0,
     });
 
     // Dummy users data: progressive but pulsating increase from 400 -> 850 over 9 months
@@ -138,7 +138,7 @@ export default function DashboardPage() {
             Welcome Back, OBJ! 👋
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Upload Comi, Manage stories/characters, Track Performance
+            Upload Comic, Manage stories/characters, Track Performance
           </Typography>
         </Box>
 
@@ -153,21 +153,21 @@ export default function DashboardPage() {
           />
           <StatCard
             title="Total Reads"
-            value={10780..toLocaleString()}
+            value={stats.totalReads.toLocaleString()}
             icon={<LibraryBooks />}
             color="#00A85A"
             trend="+12.5%"
           />
           <StatCard
             title="Total Subscribers"
-            value={(stats.activeAds + stats.inactiveAds).toLocaleString()}
+            value={stats.totalSubscribers.toLocaleString()}
             icon={<VideoCameraFront />}
             color="#00A85A"
             trend="+12.5%"
           />
           <StatCard
             title="Total Amount"
-            value={35090..toLocaleString()}
+            value={stats.totalSubscriptionAmount.toLocaleString()}
             icon={<AccountBalanceWallet />}
             color="#00A85A"
             trend="+12.5%"
@@ -178,25 +178,25 @@ export default function DashboardPage() {
         <Box mb={4} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3 }}>
           <StatCard
             title="Total Characters"
-            value={stats.activeAds.toLocaleString()}
+            value={stats.totalCharacters.toLocaleString()}
             icon={<SportsMartialArts />}
             color="#57CA22"
           />
           <StatCard
             title="Story Arcs"
-            value={stats.tokens.toLocaleString()}
+            value={stats.totalStoryArcs.toLocaleString()}
             icon={<Token />}
             color="#33C2FF"
           />
           <StatCard
             title="Total Comics"
-            value={Math.round(stats?.redemption||0).toLocaleString()}
+            value={stats.totalComics.toLocaleString()}
             icon={<ImageRounded />}
             color="#33C2FF"
           />
           <StatCard
             title="Total Issues"
-            value={stats.inactiveAds.toLocaleString()}
+            value={stats.totalIssues.toLocaleString()}
             icon={<CollectionsBookmark />}
             color="#FF1943"
           />

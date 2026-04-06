@@ -24,7 +24,6 @@ import {
   MenuItem,
   Pagination,
   Grid,
-  Badge,
 } from '@mui/material';
 import {
   Add,
@@ -33,6 +32,8 @@ import {
   Delete,
   Visibility,
   Search,
+  ChevronLeft,
+  ChevronRight,
 } from '@mui/icons-material';
 
 interface Character {
@@ -112,6 +113,187 @@ const mockCharacters: Character[] = [
 
 const ROWS_PER_PAGE = 5;
 
+interface CharacterCarouselProps {
+  characters: Character[];
+  onCharacterClick: (id: string) => void;
+}
+
+const CharacterCarousel = ({ characters, onCharacterClick }: CharacterCarouselProps) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    const container = document.getElementById('character-carousel-container');
+    if (container) {
+      const itemWidth = container.offsetWidth / 3.5;
+      const scrollAmount = itemWidth * 1.2;
+      container.scrollBy({
+        left: direction === 'right' ? scrollAmount : -scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const handleDotClick = (index: number) => {
+    const container = document.getElementById('character-carousel-container');
+    if (container) {
+      const itemWidth = (container.scrollWidth - container.offsetWidth) / (characters.length - 1);
+      container.scrollTo({
+        left: itemWidth * index,
+        behavior: 'smooth',
+      });
+      setCurrentIndex(index);
+    }
+  };
+
+  return (
+    <Card
+      sx={{
+        mb: 4,
+        overflow: 'hidden',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+      }}
+    >
+      <CardContent sx={{ p: 0 }}>
+        <Box
+          sx={{
+            position: 'relative',
+            width: '100%',
+            py: 3,
+            px: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight={700} sx={{ mb: 2, px: 1 }}>
+            Featured Characters
+          </Typography>
+
+          <Box
+            id="character-carousel-container"
+            sx={{
+              display: 'flex',
+              gap: 2,
+              overflowX: 'hidden',
+              scrollBehavior: 'smooth',
+              pb: 1,
+            }}
+          >
+            {characters.map((character) => (
+              <Box
+                key={character.id}
+                onClick={() => onCharacterClick(character.id)}
+                sx={{
+                  flex: '0 0 calc(33.333% - 12px)',
+                  minWidth: '200px',
+                  maxWidth: '250px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingBottom: '140%',
+                    overflow: 'hidden',
+                    borderRadius: 2,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    '&:hover': {
+                      boxShadow: '0 8px 24px rgba(128, 0, 0, 0.3)',
+                      transform: 'translateY(-8px)',
+                    },
+                  }}
+                >
+                  <Image
+                    src={character.image}
+                    alt={character.name}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,0))',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      p: 2,
+                      color: 'white',
+                    }}
+                  >
+                    <Typography variant="body2" fontWeight={700} noWrap>
+                      {character.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                      {character.origin}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+
+          <IconButton
+            onClick={() => handleScroll('left')}
+            sx={{
+              position: 'absolute',
+              left: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              backgroundColor: 'rgba(255,255,255,0.9)',
+              '&:hover': { backgroundColor: 'white' },
+              zIndex: 2,
+            }}
+          >
+            <ChevronLeft sx={{ color: '#800000' }} />
+          </IconButton>
+          <IconButton
+            onClick={() => handleScroll('right')}
+            sx={{
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              backgroundColor: 'rgba(255,255,255,0.9)',
+              '&:hover': { backgroundColor: 'white' },
+              zIndex: 2,
+            }}
+          >
+            <ChevronRight sx={{ color: '#800000' }} />
+          </IconButton>
+
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 1,
+              mt: 2,
+              pb: 1,
+            }}
+          >
+            {characters.map((_, index) => (
+              <Box
+                key={index}
+                onClick={() => handleDotClick(index)}
+                sx={{
+                  width: currentIndex === index ? 24 : 8,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: currentIndex === index ? '#800000' : '#80000040',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: '#800000',
+                  },
+                }}
+              />
+            ))}
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+
 export default function ManageCharacterPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
@@ -183,6 +365,11 @@ export default function ManageCharacterPage() {
     toast.success(`Character deleted successfully!`);
   };
 
+  // Handle character click from carousel/table
+  const handleCharacterClick = (characterId: string) => {
+    router.push(`/admin/managecharacter/${characterId}`);
+  };
+
   const menuOpen = Boolean(anchorEl);
 
   const originColors: Record<string, 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'> = {
@@ -241,76 +428,8 @@ export default function ManageCharacterPage() {
         </CardContent>
       </Card>
 
-      {/* Character Spotlight - Grid View */}
-      <Card sx={{ mb: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
-        <CardContent>
-          <Typography variant="h6" fontWeight={700} sx={{ mb: 3 }}>
-            Character Spotlight
-          </Typography>
-
-          <Grid container spacing={2}>
-            {mockCharacters.map((character) => (
-              <Grid size={{ xs: 6, sm: 4, md: 3 }} key={character.id}>
-                <Paper
-                  sx={{
-                    position: 'relative',
-                    width: '100%',
-                    height: '350px',
-                    paddingBottom: '120%',
-                    overflow: 'hidden',
-                    borderRadius: 2,
-                    background: '#f5f5f5',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      boxShadow: '0 12px 28px rgba(128, 0, 0, 0.2)',
-                      transform: 'translateY(-4px)',
-                    },
-                  }}
-                >
-                  {/* Character Image */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                    }}
-                  >
-                    <Image
-                      src={character.image}
-                      alt={character.name}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                    />
-                  </Box>
-
-                  {/* Character Info Overlay */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      background: 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))',
-                      p: 2,
-                      color: 'white',
-                    }}
-                  >
-                    <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>
-                      {character.name}
-                    </Typography>
-                    <Typography variant="caption" fontWeight={600}>
-                      {character.origin}
-                    </Typography>
-                  </Box>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </CardContent>
-      </Card>
+      {/* Character Spotlight - Carousel */}
+      <CharacterCarousel characters={mockCharacters} onCharacterClick={handleCharacterClick} />
 
       {/* Search and Table Section */}
       <Card sx={{ boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
@@ -365,7 +484,9 @@ export default function ManageCharacterPage() {
                     {paginatedCharacters.map((character) => (
                       <TableRow
                         key={character.id}
+                        onClick={() => handleCharacterClick(character.id)}
                         sx={{
+                          cursor: 'pointer',
                           '&:hover': {
                             backgroundColor: '#FFA50008',
                           },

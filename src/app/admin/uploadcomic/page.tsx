@@ -394,7 +394,7 @@ export default function ComicUploadPage() {
 
   const handleView = () => {
     if (selectedComic) {
-      router.push(`/admin/managecharacter/${selectedComic.id}`);
+      router.push(`/admin/uploadcomic/${selectedComic.id}`);
     }
     handleMenuClose();
   };
@@ -425,7 +425,7 @@ export default function ComicUploadPage() {
   };
 
   const handleComicClick = (comicId: string) => {
-    router.push(`/admin/managecharacter/${comicId}`);
+    router.push(`/admin/uploadcomic/${comicId}`);
   };
 
   const handleUploadClick = () => {
@@ -576,7 +576,7 @@ export default function ComicUploadPage() {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">
-                        {new Date(comic.date).toLocaleDateString()}
+                        {comic.date}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -586,7 +586,7 @@ export default function ComicUploadPage() {
                     </TableCell>
                     <TableCell align="right">
                       <Chip
-                        label={comic.reads.toLocaleString()}
+                        label={comic.reads}
                         size="small"
                         variant="outlined"
                         icon={<TrendingUp sx={{ fontSize: 14 }} />}
