@@ -209,8 +209,8 @@ export default function DashboardPage() {
           <AreaChart data={usersTrendData}>
             <defs>
               <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00A85A" stopOpacity={0.35} />
-                <stop offset="100%" stopColor="#00A85A" stopOpacity={0.05} />
+                <stop offset="0%" stopColor="#FFA319" stopOpacity={0.35} />
+                <stop offset="100%" stopColor="#FFA319" stopOpacity={0.05} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

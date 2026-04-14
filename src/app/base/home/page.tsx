@@ -10,7 +10,6 @@ import {
   Grid,
   CircularProgress,
   Typography,
-  IconButton,
 } from '@mui/material';
  
 const slides = [
@@ -306,7 +305,7 @@ export default function Homepage() {
         >
           <Grid container spacing={1.5}>
             {characters.map((char) => (
-              <Grid item xs={6} key={char.name}>
+              <Grid size={{ xs: 6 }} key={char.name}>
                 <Box
                   sx={{
                     borderRadius: "10px",
